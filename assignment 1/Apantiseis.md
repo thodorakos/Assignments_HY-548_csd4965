@@ -392,5 +392,10 @@ kai telos:
 ```bash
 docker push teonikaris/my-django-app:latest
 ```
+
 4. 
+
+prwta ftiaxame to github workflow dir kai mesa valame ena yaml file poy tha kanei build kai that kanei push 
+
+meta 
 
