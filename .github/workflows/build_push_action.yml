@@ -1,0 +1,35 @@
+name: Build and push the Django image
+
+# The workflow_dispatch event will trigger the workflow from the GitHub Actions(ui).
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1: Check out the repository code so the workflow can find the Dockerfile
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2: Log in to Docker Hub using credentials stored in GitHub Secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3: Set up Docker Buildx 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 4: Build the image and push it to my Docker Hub account
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./hy548/django
+          push: true
+          # vazoyme tags sto image 'latest'. 
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-django-app:latest
+          
