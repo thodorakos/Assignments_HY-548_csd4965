@@ -394,6 +394,7 @@ docker push teonikaris/my-django-app:latest
 ```
 
 4. 
+
 prwta valame ta sectret vars poy xreiaontai afoy bgalame to docker token
 meta ftiaxame to github workflow apo to actions tab kai mesa valame ena yaml file poy tha kanei build kai that kanei push 
 kai telos to trexame
