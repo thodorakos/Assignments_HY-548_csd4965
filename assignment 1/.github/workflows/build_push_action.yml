@@ -32,3 +32,4 @@ jobs:
           push: true
           # vazoyme tags sto image 'latest'. 
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-django-app:latest
+          
