@@ -28,7 +28,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./hy548/django
+          context: ./django
           push: true
           # vazoyme tags sto image 'latest'. 
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-django-app:latest
