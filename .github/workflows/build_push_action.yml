@@ -12,6 +12,8 @@ jobs:
       # 1: Check out the repository code so the workflow can find the Dockerfile
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive # epeidh to hy548 einai repo kai oxi dir prepei na valoyme ayth thn grammh
 
       # 2: Log in to Docker Hub using credentials stored in GitHub Secrets
       - name: Log in to Docker Hub
