@@ -13,7 +13,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive # epeidh to hy548 einai repo kai oxi dir prepei na valoyme ayth thn grammh
+          submodules: false
+
+      # 1b: Check out hy548 directly into the same path used by the Docker context
+      - name: Checkout hy548 source
+        uses: actions/checkout@v4
+        with:
+          repository: chazapis/hy548
+          path: assignment 1/hy548
+          fetch-depth: 1
 
       # 2: Log in to Docker Hub using credentials stored in GitHub Secrets
       - name: Log in to Docker Hub
