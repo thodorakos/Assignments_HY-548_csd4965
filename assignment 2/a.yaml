@@ -1,0 +1,41 @@
+# Assignment 2 , 2)
+# a. Job and ConfigMap
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wget-script
+data:
+  download.sh: |
+    #!/bin/bash
+    apt-get update && apt-get install -y wget
+    mkdir -p /data
+    cd /data
+    # Download the complete site
+    wget -E -k -p https://csd.uoc.gr/
+    DIR=$(find . -maxdepth 1 -type d -name "*csd.uoc.gr*" | head -n 1)
+    if [ -n "$DIR" ]; then cp -a "$DIR"/. /data/; fi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wget-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: downloader
+        image: ubuntu:24.04
+        command: ["/bin/bash", "/scripts/download.sh"]
+        volumeMounts:
+        - name: script-vol
+          mountPath: /scripts
+        - name: site-data
+          mountPath: /data
+      restartPolicy: Never
+      volumes:
+      - name: script-vol
+        configMap:
+          name: wget-script
+      - name: site-data
+        emptyDir: {}
