@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: hello-kubernetes
+        image: carvicsforth/hello-kubernetes:1.10
+        env:
+        - name: MESSAGE
+          value: {{ .Values.message | quote }}
+        - name: HANDLER_PATH_PREFIX
+          value: {{ .Values.endpoint | quote }}
+        - name: RENDER_PATH_PREFIX
+          value: {{ .Values.endpoint | quote }}
+        {{- if .Values.resources }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        {{- end }}

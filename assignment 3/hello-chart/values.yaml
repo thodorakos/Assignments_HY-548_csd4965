@@ -1,0 +1,12 @@
+# a. The string to return 
+message: "Hello world!"
+
+# b. The endpoint to use for the service
+endpoint: "/hello"
+
+# c. CPU and memory limits
+resources: {}
+
+# d. The maximum number of Deployment Pods for the HPA
+hpa:
+  maxReplicas: 10
