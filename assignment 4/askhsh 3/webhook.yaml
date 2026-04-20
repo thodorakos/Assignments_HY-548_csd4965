@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: custom-label-injector
+  labels:
+    app: custom-label-injector
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: issuer-selfsigned
+  namespace: custom-label-injector
+  labels:
+    app: custom-label-injector
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: controller-certificate
+  namespace: custom-label-injector
+  labels:
+    app: custom-label-injector
+spec:
+  secretName: controller-certificate
+  duration: 87600h
+  commonName: controller.custom-label-injector.svc
+  dnsNames:
+  - controller.custom-label-injector.svc
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: issuer-selfsigned
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: controller
+  namespace: custom-label-injector
+  labels:
+    app: custom-label-injector
+spec:
+  type: ClusterIP
+  ports:
+    - port: 443
+      targetPort: 8443  # Points to the HTTPS port
+      name: https
+  selector:
+    app: custom-label-injector
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller
+  namespace: custom-label-injector
+  labels:
+    app: custom-label-injector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: custom-label-injector
+  template:
+    metadata:
+      labels:
+        app: custom-label-injector
+    spec:
+      containers:
+      # Use the new container image here
+      - image: teonikaris/k8s-webhook-controller:v2
+        name: controller
+        ports:
+        - containerPort: 8443
+          name: https
+        volumeMounts:
+        - name: controller-certificate-volume
+          mountPath: /etc/ssl/keys
+          readOnly: true
+      volumes:
+      - name: controller-certificate-volume
+        secret:
+          secretName: controller-certificate
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: custom-label-injector
+  namespace: custom-label-injector
+  labels:
+    app: custom-label-injector
+  annotations:
+    cert-manager.io/inject-ca-from: custom-label-injector/controller-certificate
+webhooks:
+  - name: controller.custom-label-injector.svc
+    clientConfig:
+      service:
+        name: controller
+        namespace: custom-label-injector
+        path: "/mutate"
+    rules:
+      - operations: ["CREATE"]
+        apiGroups: ["*"]
+        apiVersions: ["*"]
+        resources: ["pods", "deployments"]
+    namespaceSelector:
+      matchLabels:
+        custom-label-injector: enabled
+    admissionReviewVersions: ["v1", "v1beta1"]
+    sideEffects: None
+    failurePolicy: Fail

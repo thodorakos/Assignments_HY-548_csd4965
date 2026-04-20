@@ -1,0 +1,43 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: fruits.hy548.csd.uoc.gr
+spec:
+  # group name to use for REST API: /apis/<group>/<version>
+  group: hy548.csd.uoc.gr
+  scope: Namespaced
+  names:
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: fruits
+    # singular name 
+    singular: fruit
+    kind: Fruit
+    # shortNames for short strings
+    shortNames:
+    - fr
+  versions:
+    - name: v1
+      # Each version can be enabled/disabled by Served flag.
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              # Specify the required properties 
+              required:
+                - origin
+                - count
+                - grams
+              properties:
+                origin:
+                  type: string
+                  description: "fruit origination."
+                count:
+                  type: integer
+                  description: "total number of fruits."
+                grams:
+                  type: integer
+                  description: "total weight in grams."

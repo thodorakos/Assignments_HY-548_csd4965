@@ -1,0 +1,7 @@
+apiVersion: hy548.csd.uoc.gr/v1
+kind: Greeting
+metadata:
+  name: my-hello
+spec:
+  message: "Hello from the custom controller for hy548!"
+  replicas: 2
